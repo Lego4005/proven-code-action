@@ -1,0 +1,52 @@
+name: "Proven Code — Verifiable AI PR Attestation"
+description: "Certify every AI-generated pull request with a cryptographic attestation. No source code uploaded — hashes only."
+author: "proven.dev"
+
+branding:
+  icon: "shield"
+  color: "purple"
+
+inputs:
+  proven_api_key:
+    description: "Your Proven API key (from proven.dev dashboard)"
+    required: true
+  proven_api_url:
+    description: "Proven API base URL"
+    required: false
+    default: "https://proven.dev"
+  mode:
+    description: "Attestation mode: 'diff' (V1) or 'graph' (V2 — includes codegraph analysis)"
+    required: false
+    default: "diff"
+  policy_url:
+    description: "URL to your AI code policy document (optional)"
+    required: false
+    default: ""
+  fail_on_risk:
+    description: "Fail the check if risk score exceeds threshold (V2 only). Set to 0 to disable."
+    required: false
+    default: "0"
+  include_patterns:
+    description: "Glob patterns for files to include in attestation (comma-separated). Default: all files."
+    required: false
+    default: "**/*"
+  exclude_patterns:
+    description: "Glob patterns for files to exclude (comma-separated). Default: none."
+    required: false
+    default: ""
+
+outputs:
+  report_url:
+    description: "URL to the full attestation report on proven.dev"
+  short_id:
+    description: "Short report ID for quick reference"
+  seal_id:
+    description: "ProvenSeal ID (pv_XXXXXXX) for cryptographic verification"
+  badge:
+    description: "Trust badge level (attested, graph_verified, risk_warning)"
+  trust_level:
+    description: "Trust level string"
+
+runs:
+  using: "node20"
+  main: "proven-code.js"

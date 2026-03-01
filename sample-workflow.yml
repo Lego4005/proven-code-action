@@ -1,0 +1,44 @@
+# .github/workflows/proven-code.yml
+#
+# Proven Code — Verifiable AI PR Attestation
+# Add this to your repo to certify every pull request.
+# No source code is uploaded — only hashes, stats, and metadata.
+#
+# Get your API key at: https://proven.dev/dashboard
+
+name: Proven Code
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  checks: write
+
+jobs:
+  attest:
+    runs-on: ubuntu-latest
+    name: Certify PR
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history needed for accurate diffs
+
+      - name: Run Proven Code Attestation
+        uses: proven-dev/proven-code@v1
+        id: proven
+        with:
+          proven_api_key: ${{ secrets.PROVEN_API_KEY }}
+          # mode: "graph"          # Uncomment for V2 codegraph analysis
+          # policy_url: "https://your-company.com/ai-policy"
+          # fail_on_risk: 80       # V2 only: fail if risk > threshold
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print results
+        run: |
+          echo "Report: ${{ steps.proven.outputs.report_url }}"
+          echo "Seal: ${{ steps.proven.outputs.seal_id }}"
+          echo "Badge: ${{ steps.proven.outputs.badge }}"
